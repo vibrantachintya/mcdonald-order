@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #container {
+            width: 700px;
+            margin: 100px auto;
+            text-align: center;
+        }
+
+        #items {
+            margin: 50px 0px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            justify-content: center;
+        }
+
+        #items > div {
+            text-align: left;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox {
+            cursor: pointer;
+        }
+
+        #place-order {
+            background: teal;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+        }
+
+        #status {
+            margin: 40px 0px;
+            font-size: 24px;
+            color: teal;
+        }
+
+        #order-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>Order from McDonald</h1>
+        <h3 id="order-id">Current Order Id : 0</h3>
+        <div id="items">
+            <div>
+                <input type="checkbox" class="checkbox" value="0" /> <label class="food-name">McAloo Tikki Burger</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="1" /> <label class="food-name">Veg McPuff Pizza</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="2" /> <label class="food-name">Coke Float</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="3" /> <label class="food-name">Iced Tea</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="4" /> <label class="food-name">Soft Serve</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="5" /> <label class="food-name">Mexican McAloo Tikki</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="6" /> <label class="food-name">Green Chilli Aloo Nan</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="7" /> <label class="food-name">Chicken Kebab Wrap</label>
+            </div>
+            <div>
+                <input type="checkbox" class="checkbox" value="8" /> <label class="food-name">Mexican Aloo Wrap</label>
+            </div>
+        </div>
+        <button id="place-order">Place Order</button>
+        <div id="status">We are ready to serve you!</div>
+        <div id="order-container"></div>
+    </div>
+</body>
+<script>
+    var orderId = 1;
+    var arr = {
+        '0': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/McAlooTikki.jpg",
+        '1': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/VegPizzaMcPuff.jpg",
+        '2': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/CokeFloat.jpg",
+        '3': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/IcedTea.jpg",
+        '4': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/SoftServe.jpg",
+        '5': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/Mexican-McAloo-Tikki.png",
+        '6': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/Green-Chilli-Naan-Aloo.png",
+        '7': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/Chicken-Kebab-Wrap.png",
+        '8': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/Mexican-Alo-Wrap.png",
+        '9': "https://www.mcdonaldsindia.com/m/images/products/HappyPriceMenu/Salsa-Bean-Burger.png"
+    }
+
+    document.querySelector("#place-order").addEventListener("click", placeOrder);
+
+    function placeOrder() {  
+        document.querySelector("#order-container").textContent = "";
+        let n = 5;
+        document.querySelector("#status").textContent = `We are preparing your order. Serving food in ${n} sec(s).`;
+        n--;
+        var timer = setInterval(function() {
+            document.querySelector("#status").textContent = `We are preparing your order. Serving food in ${n} sec(s).`;
+            n--;
+        }, 1000);
+        var orderPromise = new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                resolve();
+            }, 5000);
+        });
+
+        orderPromise.then(function(res) {
+            clearInterval(timer);
+            displayOrder();
+        });
+    }
+
+    function displayOrder() {      
+        document.querySelector("#order-id").textContent = `Current Order Id : ${orderId}`;
+        orderId++;
+        document.querySelector("#status").textContent = "Food is ready!";
+        document.querySelector("#order-container").textContent = "";
+        var checkBoxes = document.getElementsByClassName('checkbox');
+        var foodName = document.getElementsByClassName('food-name');
+        var foodList = [];
+        for(let i = 0; i < checkBoxes.length; i++) {
+            if(checkBoxes[i].checked == true) {
+                var food = {
+                    name: foodName[i].textContent,
+                    img: arr[i]
+                };
+                foodList.push(food);
+                checkBoxes[i].checked = false;
+            }
+        }
+        foodList.map(function(el) {
+            var div = document.createElement("div");
+            var img = document.createElement("img");
+            img.src = el.img;
+            var h2 = document.createElement("h2");
+            h2.textContent = el.name;
+            div.append(img, h2);
+            document.querySelector("#order-container").append(div);
+        });
+    }
+</script>
+</html>
